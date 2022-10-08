@@ -27,8 +27,9 @@ import com.suryansh.patientcrud.repository.PatientRecordRepository;
 import java.util.List;
 import java.util.Optional;
 import javax.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,6 +43,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/patient")
 public class PatientRecordController {
+
+    private static final Logger log = LoggerFactory.getLogger(PatientRecordController.class);
+
     @Autowired PatientRecordRepository patientRecordRepository;
     // CRUD methods to be added
 
@@ -67,7 +71,7 @@ public class PatientRecordController {
         }
         Optional<PatientRecord> optionalRecord = patientRecordRepository.findById(patientRecord.getPatientId());
         if (!optionalRecord.isPresent()) {
-            System.out.println("Patient with ID " + patientRecord.getPatientId() + " does not exist.");
+            log.error("Patient with ID {} does not exist. ", patientRecord.getPatientId());
             throw new NotFoundException();
         }
         PatientRecord existingPatientRecord = optionalRecord.get();
@@ -82,7 +86,7 @@ public class PatientRecordController {
     @DeleteMapping(value = "{patientId}")
     public void deletePatientById(@PathVariable(value = "patientId") Long patientId) throws NotFoundException {
         if (!patientRecordRepository.findById(patientId).isPresent()) {
-            System.out.println("Patient with ID " + patientId + " does not exist.");
+            log.error("Patient with ID {} does not exist. ", patientId);
             throw new NotFoundException();
         }
         patientRecordRepository.deleteById(patientId);

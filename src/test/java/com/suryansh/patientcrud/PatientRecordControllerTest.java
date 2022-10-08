@@ -60,9 +60,9 @@ public class PatientRecordControllerTest {
     @MockBean
     PatientRecordRepository patientRecordRepository;
 
-    PatientRecord RECORD_1 = new PatientRecord(1l, "Rayven Yor", 23, "Cebu Philippines");
-    PatientRecord RECORD_2 = new PatientRecord(2l, "David Landup", 27, "New York USA");
-    PatientRecord RECORD_3 = new PatientRecord(3l, "Jane Doe", 31, "New York USA");
+    PatientRecord RECORD_1 = new PatientRecord(1l, "Kopal Niranjan", 23, "Lucknow India");
+    PatientRecord RECORD_2 = new PatientRecord(2l, "Suryansh Bhadouria", 27, "Lucknow India");
+    PatientRecord RECORD_3 = new PatientRecord(3l, "Joan Arc", 31, "New York USA");
 
     @Test
     public void getAllRecords_success() throws Exception {
@@ -75,7 +75,7 @@ public class PatientRecordControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", hasSize(3)))
-            .andExpect(jsonPath("$[2].name", is("Jane Doe")));
+            .andExpect(jsonPath("$[2].name", is("Joan Arc")));
     }
 
     @Test
@@ -87,13 +87,13 @@ public class PatientRecordControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", notNullValue()))
-            .andExpect(jsonPath("$.name", is("Rayven Yor")));
+            .andExpect(jsonPath("$.name", is("Kopal Niranjan")));
     }
 
     @Test
     public void createRecord_success() throws Exception {
         PatientRecord record = PatientRecord.builder()
-            .name("John Doe")
+            .name("John Arc")
             .age(47)
             .address("New York USA")
             .build();
@@ -108,16 +108,16 @@ public class PatientRecordControllerTest {
         mockMvc.perform(mockRequest)
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", notNullValue()))
-            .andExpect(jsonPath("$.name", is("John Doe")));
+            .andExpect(jsonPath("$.name", is("John Arc")));
     }
 
     @Test
     public void updatePatientRecord_success() throws Exception {
         PatientRecord updatedRecord = PatientRecord.builder()
             .patientId(1l)
-            .name("Rayven Zambo")
+            .name("Baby Kopal")
             .age(23)
-            .address("Cebu Philippines")
+            .address("Bangalore India")
             .build();
 
         Mockito.when(patientRecordRepository.findById(RECORD_1.getPatientId())).thenReturn(Optional.of(RECORD_1));
@@ -131,7 +131,8 @@ public class PatientRecordControllerTest {
         mockMvc.perform(mockRequest)
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", notNullValue()))
-            .andExpect(jsonPath("$.name", is("Rayven Zambo")));
+            .andExpect(jsonPath("$.name", is("Baby Kopal")))
+            .andExpect(jsonPath("$.address", is("Bangalore India")));
     }
 
     @Test

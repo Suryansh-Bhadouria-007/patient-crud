@@ -30,7 +30,6 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -65,14 +64,13 @@ public class PatientRecordController {
     }
 
     @PutMapping
-    public PatientRecord updatePatientRecord(@RequestBody PatientRecord patientRecord) throws NotFoundException {
+    public PatientRecord updatePatientRecord(@RequestBody PatientRecord patientRecord) throws Exception {
         if (patientRecord == null || patientRecord.getPatientId() == null) {
             throw new InvalidRequestException("PatientRecord or ID must not be null!");
         }
         Optional<PatientRecord> optionalRecord = patientRecordRepository.findById(patientRecord.getPatientId());
         if (!optionalRecord.isPresent()) {
-            log.error("Patient with ID {} does not exist. ", patientRecord.getPatientId());
-            throw new NotFoundException();
+            throw new Exception("Patient with ID " + patientRecord.getPatientId() + " does not exist.");
         }
         PatientRecord existingPatientRecord = optionalRecord.get();
 
@@ -84,10 +82,10 @@ public class PatientRecordController {
     }
 
     @DeleteMapping(value = "{patientId}")
-    public void deletePatientById(@PathVariable(value = "patientId") Long patientId) throws NotFoundException {
+    public void deletePatientById(@PathVariable(value = "patientId") Long patientId) throws Exception {
         if (!patientRecordRepository.findById(patientId).isPresent()) {
             log.error("Patient with ID {} does not exist. ", patientId);
-            throw new NotFoundException();
+            throw new Exception("Patient with ID " + patientId + " does not exist.");
         }
         patientRecordRepository.deleteById(patientId);
     }

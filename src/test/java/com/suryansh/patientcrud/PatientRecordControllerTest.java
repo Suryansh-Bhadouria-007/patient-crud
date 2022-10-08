@@ -143,7 +143,7 @@ public class PatientRecordControllerTest {
             .address("221B Baker Street")
             .build();
 
-        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.post("/patient")
+        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.put("/patient")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
             .content(this.mapper.writeValueAsString(updatedRecord));
@@ -165,9 +165,9 @@ public class PatientRecordControllerTest {
             .address("221B Baker Street")
             .build();
 
-        Mockito.when(patientRecordRepository.findById(updatedRecord.getPatientId())).thenReturn(null);
+        Mockito.when(patientRecordRepository.findById(updatedRecord.getPatientId())).thenReturn(Optional.empty());
 
-        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.post("/patient")
+        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.put("/patient")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
             .content(this.mapper.writeValueAsString(updatedRecord));
@@ -175,7 +175,7 @@ public class PatientRecordControllerTest {
         mockMvc.perform(mockRequest)
             .andExpect(status().isBadRequest())
             .andExpect(result ->
-                assertTrue(result.getResolvedException() instanceof ChangeSetPersister.NotFoundException))
+                assertTrue(result.getResolvedException() instanceof Exception))
             .andExpect(result ->
                 assertEquals("Patient with ID 5 does not exist.", result.getResolvedException().getMessage()));
     }
@@ -199,7 +199,7 @@ public class PatientRecordControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest())
             .andExpect(result ->
-                assertTrue(result.getResolvedException() instanceof NotFoundException))
+                assertTrue(result.getResolvedException() instanceof Exception))
             .andExpect(result ->
                 assertEquals("Patient with ID 5 does not exist.", result.getResolvedException().getMessage()));
     }

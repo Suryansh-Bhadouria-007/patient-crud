@@ -50,6 +50,20 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 @WebMvcTest(PatientRecordController.class)
+/**
+ * 1. @SpringBootTest annotation loads the full application context so that we are able to test various components.
+ *    So basically, the @SpringBootTest annotation tells Spring Boot to look for the main configuration class
+ *    (one with @SpringBootApplication, for instance) and use that to start a Spring application context.
+ *
+ *    @WebMvcTest annotation loads only the specified controller and its dependencies only without loading the entire application.
+ *    For example, let's say you have multiple Spring MVC controllers in your Spring boot project
+ *    - EmployeeController, UserController, LoginController, etc. then we can use @WebMvcTest annotation to test
+ *    only specific Spring MVC controllers without loading all the controllers and their dependencies.
+ *
+ * 2. Spring Boot provides @SpringBootTest annotation for Integration testing.
+ *
+ *    Spring boot provides @WebMvcTest annotation for testing Spring MVC controllers (Unit testing).
+ */
 public class PatientRecordControllerTest {
     @Autowired
     MockMvc mockMvc;

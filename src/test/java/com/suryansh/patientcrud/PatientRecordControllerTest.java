@@ -33,6 +33,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.suryansh.patientcrud.controller.PatientRecordController;
 import com.suryansh.patientcrud.entity.PatientRecord;
 import com.suryansh.patientcrud.exception.InvalidRequestException;
+import com.suryansh.patientcrud.exception.ResourceNotFoundException;
 import com.suryansh.patientcrud.repository.PatientRecordRepository;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,8 +44,6 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.crossstore.ChangeSetPersister;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -173,9 +172,9 @@ public class PatientRecordControllerTest {
             .content(this.mapper.writeValueAsString(updatedRecord));
 
         mockMvc.perform(mockRequest)
-            .andExpect(status().isBadRequest())
+            .andExpect(status().isNotFound())
             .andExpect(result ->
-                assertTrue(result.getResolvedException() instanceof Exception))
+                assertTrue(result.getResolvedException() instanceof ResourceNotFoundException))
             .andExpect(result ->
                 assertEquals("Patient with ID 5 does not exist.", result.getResolvedException().getMessage()));
     }
@@ -192,14 +191,14 @@ public class PatientRecordControllerTest {
 
     @Test
     public void deletePatientById_notFound() throws Exception {
-        Mockito.when(patientRecordRepository.findById(5l)).thenReturn(null);
+        Mockito.when(patientRecordRepository.findById(5l)).thenReturn(Optional.empty());
 
         mockMvc.perform(MockMvcRequestBuilders
-                .delete("/patient/2")
+                .delete("/patient/5")
                 .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isBadRequest())
+            .andExpect(status().isNotFound())
             .andExpect(result ->
-                assertTrue(result.getResolvedException() instanceof Exception))
+                assertTrue(result.getResolvedException() instanceof ResourceNotFoundException))
             .andExpect(result ->
                 assertEquals("Patient with ID 5 does not exist.", result.getResolvedException().getMessage()));
     }
